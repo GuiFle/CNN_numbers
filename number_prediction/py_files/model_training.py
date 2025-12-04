@@ -15,33 +15,12 @@ from torchvision import datasets, transforms
 # ----------------------------
 # 1. Dataset & Dataloader
 # ----------------------------
-print("Setting up dataset transforms...")
 
-# Define image transformations:
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.1307,), (0.3081,))
-])
-
-print("Loading MNIST training dataset...")
-train_loader = DataLoader(
-    datasets.MNIST(root="./number_prediction", train=True, download=True, transform=transform),
-    batch_size=64, shuffle=True
-)
-
-print("Loading MNIST test dataset...")
-test_loader = DataLoader(
-    datasets.MNIST(root="./number_prediction", train=False, download=True, transform=transform),
-    batch_size=64
-)
-
-print("Datasets and dataloaders ready.\n")
 
 
 # ----------------------------
 # 2. Improved CNN
 # ----------------------------
-print("Building CNN model...")
 
 class CNN(nn.Module):
     def __init__(self):
@@ -63,24 +42,18 @@ class CNN(nn.Module):
     def forward(self, x):
         return self.fc(self.conv(x))
 
-print("Model created.\n")
-
-
 # ----------------------------
 # 3. Training Function
 # ----------------------------
 def train_model(epochs=10):
 
-    print("Checking for GPU...")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}\n")
 
-    print("Initializing model...")
     model = CNN().to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    print("Loss function and optimizer ready.\n")
 
     print("Starting training...\n")
 
@@ -144,6 +117,28 @@ def train_model(epochs=10):
 # 4. Main
 # ----------------------------
 if __name__ == "__main__":
+    print("Setting up dataset transforms...")
+
+    # Define image transformations:
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,))
+    ])
+
+    print("Loading MNIST training dataset...")
+    train_loader = DataLoader(
+        datasets.MNIST(root="./number_prediction", train=True, download=True, transform=transform),
+        batch_size=64, shuffle=True
+    )
+
+    print("Loading MNIST test dataset...")
+    test_loader = DataLoader(
+        datasets.MNIST(root="./number_prediction", train=False, download=True, transform=transform),
+        batch_size=64
+    )
+
+    print("Datasets and dataloaders ready.\n")
+        
     print("Program started.\n")
     train_model()
     print("Program finished.")
